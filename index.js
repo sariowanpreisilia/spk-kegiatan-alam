@@ -46,12 +46,8 @@ app.use(
 penilaianRoutes
 );
 
-app.listen(
-5000,
-()=>{
+const PORT = process.env.PORT || 5000;
 
-console.log(
-"Server jalan"
-);
-
+app.listen(PORT, () => {
+  console.log(`Server jalan di port ${PORT}`);
 });
