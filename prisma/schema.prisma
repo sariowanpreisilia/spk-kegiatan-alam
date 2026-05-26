@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model kriteria {
+  id        Int             @id @default(autoincrement())
+  nama      String          @db.VarChar(50)
+  bobot     Float           @db.Float
+  tipe      kriteria_tipe
+  penilaian penilaian[]
+}
+
+model alternatif {
+  id        Int         @id @default(autoincrement())
+  nama      String      @db.VarChar(50)
+  gambar    String?     @db.VarChar(100)
+  deskripsi String?     @db.Text
+  penilaian penilaian[]
+}
+
+model penilaian {
+  id            Int         @id @default(autoincrement())
+  id_alternatif Int
+  id_kriteria   Int
+  nilai         Float       @db.Float
+
+  alternatif alternatif @relation(fields: [id_alternatif], references: [id])
+  kriteria   kriteria   @relation(fields: [id_kriteria], references: [id])
+
+  @@unique([id_alternatif, id_kriteria]) // 🔥 WAJIB BUAT UPSERT
+}
+
+enum kriteria_tipe {
+  benefit
+  cost
+}
