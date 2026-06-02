@@ -43,8 +43,7 @@ router.put("/:id", async (req, res) => {
 
     const data = await prisma.kriteria.update({
       where: {
-        // Jika di schema.prisma ID Anda bertipe Int/Autoincrement, gunakan Number(id)
-        id: Number(id), 
+        id: Number(id),
       },
       data: {
         nama,
@@ -65,25 +64,24 @@ router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await prisma.prisma.kriteria.delete({
+    // 🔥 Sudah diperbaiki: prisma.kriteria.delete (tidak double lagi)
+    const data = await prisma.kriteria.delete({
       where: {
-        // Jika di schema.prisma ID Anda bertipe Int/Autoincrement, gunakan Number(id)
         id: Number(id),
       },
     });
 
     res.json({ message: "Data kriteria berhasil dihapus", data });
   } catch (error) {
-    console.error(error);
+    console.error("Detail Error Backend:", error);
     
-    // Menangani error jika kriteria gagal dihapus karena berelasi dengan tabel penilaian (Foreign Key)
     if (error.code === "P2003") {
       return res.status(400).json({ 
-        error: "Data gagal dihapus karena masih digunakan pada data penilaian" 
+        error: "Data gagal dihapus karena kriteria ini masih digunakan pada data penilaian!" 
       });
     }
     
-    res.status(500).json({ error: "Gagal menghapus kriteria" });
+    res.status(500).json({ error: "Gagal menghapus kriteria karena masalah internal server." });
   }
 });
 
