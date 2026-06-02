@@ -2,12 +2,14 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import { PrismaClient } from "@prisma/client"; // 🔥 Pindahkan ke atas agar stabil
 
 import kriteriaRoutes from "./routes/kriteria.js";
 import alternatifRoutes from "./routes/alternatif.js";
 import penilaianRoutes from "./routes/penilaian.js";
 
 const app = express();
+const prisma = new PrismaClient(); // 🔥 Inisialisasi di sini
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,23 +18,19 @@ app.use(cors());
 app.use(express.json());
 
 // ================= AKSES FOLDER GAMBAR LOKAL =================
-// Berguna sebagai cadangan jika masih ada data yang membaca file lokal img Anda
 app.use("/img", express.static(path.join(__dirname, "img")));
 
 // ================= RUTE DARURAT UNTUK SINKRONISASI DATABASE =================
-// Akses URL ini sekali di browser setelah deploy untuk mengubah kolom gambar menjadi TEXT
 app.get("/paksa-update-db", async (req, res) => {
   try {
-    const { PrismaClient } = await import("@prisma/client");
-    const prisma = new PrismaClient();
-    
-    // Memaksa TiDB Cloud mengubah kolom gambar menjadi TEXT secara langsung
+    // Memaksa TiDB Cloud mengubah kolom gambar menjadi TEXT menggunakan instance prisma yang sudah ada
     await prisma.$executeRawUnsafe(
       `ALTER TABLE alternatif MODIFY COLUMN gambar TEXT;`
     );
     
     res.send("<h1>✅ Sukses! Kolom gambar berhasil diubah menjadi TEXT di TiDB Cloud.</h1>");
   } catch (error) {
+    console.error("Error paksa-update-db:", error);
     res.status(500).send(`<h1>❌ Gagal memperbarui: ${error.message}</h1>`);
   }
 });
