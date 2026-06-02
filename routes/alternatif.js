@@ -123,7 +123,7 @@ router.delete("/:id", async (req, res) => {
 
     // Langkah A: Bersihkan semua data penilaian anak yang mengikat id alternatif ini
     await prisma.penilaian.deleteMany({
-      where: { alternatif_id: Number(id) }, 
+      where: { id_alternatif: Number(id) }, 
       // Catatan: Jika di schema.prisma Anda nama kolomnya 'id_alternatif', ganti menjadi: id_alternatif: Number(id)
     });
 
