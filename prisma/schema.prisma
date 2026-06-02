@@ -18,7 +18,7 @@ model kriteria {
 model alternatif {
   id        Int         @id @default(autoincrement())
   nama      String      @db.VarChar(50)
-  gambar    String?     @db.VarChar(100)
+  gambar    String?     @db.Text //
   deskripsi String?     @db.Text
   penilaian penilaian[]
 }
