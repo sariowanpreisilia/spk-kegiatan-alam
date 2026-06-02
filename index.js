@@ -15,18 +15,14 @@ const __dirname = path.dirname(__filename);
 app.use(cors());
 app.use(express.json());
 
-// 🔥 PERBAIKAN: Ekspos folder 'public/uploads' agar bisa diakses lewat URL /img
-app.use(
-  "/img",
-  express.static(path.join(__dirname, "public", "uploads"))
-);
+// 🔥 PASTIKAN JALUR INI BENAR: Mengarah ke folder 'img' di root project
+app.use("/img", express.static(path.join(__dirname, "img")));
 
 app.use("/kriteria", kriteriaRoutes);
 app.use("/alternatif", alternatifRoutes);
 app.use("/penilaian", penilaianRoutes);
 
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, () => {
   console.log(`Server jalan di port ${PORT}`);
 });
